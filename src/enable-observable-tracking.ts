@@ -53,3 +53,13 @@ export function enableObservableTracking(): void {
 export function isObservableTrackingEnabled(): boolean {
   return trackingEnabled;
 }
+
+/**
+ * Resets the enabled flag for unit tests that assert deferred binding checks.
+ * Does not undo SolidJS `enableExternalSource` registration.
+ *
+ * @internal
+ */
+export function resetObservableTrackingForTests(): void {
+  trackingEnabled = false;
+}

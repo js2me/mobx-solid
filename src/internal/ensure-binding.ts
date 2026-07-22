@@ -9,7 +9,8 @@ export function ensureBinding(): void {
     throw new Error(
       "[mobx-solid] Observable tracking is not enabled. " +
         "Call enableObservableTracking() at your application entry point " +
-        "before using observer, Observer, or MobX observables in SolidJS computations.",
+        "before rendering observer/Observer components or reading MobX observables " +
+        "in SolidJS computations.",
     );
   }
 }

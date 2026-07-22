@@ -18,7 +18,7 @@ export default defineConfig({
       "test/hydration.test.tsx",
       "test/mvvm-scenario.test.tsx",
       "test/memory-leak.test.ts",
-      "test/memory-leak.test.tsx",
+      "test/memory-leak-components.test.tsx",
     ],
   },
 });

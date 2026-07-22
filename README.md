@@ -66,11 +66,14 @@ enableObservableTracking();
 
 Wraps a SolidJS component to make it reactive to MobX observables. The component's JSX is evaluated inside a `createMemo` computation, which tracks MobX observables via `enableExternalSource`.
 
+Call `enableObservableTracking()` at the app entry point before rendering (module-level `observer(...)` is fine — the binding is checked on first render).
+
 ```tsx
 const MyComponent = observer(() => {
   return <div>{store.count}</div>;
 });
 ```
+
 
 In SolidJS, components run only once. Fine-grained updates happen through reactive expressions in JSX (compiled by SolidJS). `observer` ensures that MobX observables read anywhere in the component — both in JSX expressions and in the component body — are properly tracked.
 

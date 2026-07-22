@@ -15,7 +15,9 @@ import { ensureBinding } from "./internal/ensure-binding";
  * via `enableExternalSource`. The memo accessor is returned so that SolidJS's
  * rendering system can reactively track changes.
  *
- * **Important**: `enableObservableTracking()` must be called before using `observer`.
+ * **Important**: `enableObservableTracking()` must be called at the app
+ * entry point before rendering any `observer` component (module-level
+ * `observer(...)` wrappers are fine — the check runs on first render).
  *
  * @param component - A SolidJS component function
  * @returns A wrapped component that tracks MobX observables
@@ -37,9 +39,16 @@ export function observer<P extends Record<string, unknown>>(
     return component;
   }
 
-  ensureBinding();
-
   const wrapped: Component<P> = (props) => {
+    if (isUsingStaticRendering()) {
+      return component(props);
+    }
+
+    // Defer to render time: with ESM, module-scope `observer(...)` runs
+    // during import — before the entry point can call
+    // `enableObservableTracking()`.
+    ensureBinding();
+
     const memo = createMemo(() => component(props));
     // Return the memo accessor. In SolidJS, function values in JSX
     // are called inside reactive computations, so the DOM updates

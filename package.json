@@ -19,11 +19,12 @@
   "sideEffects": false,
   "scripts": {
     "dev": "vitest watch",
+    "playground": "vite --config playground/vite.config.ts",
     "build": "vite build",
     "test": "vitest run",
     "test:watch": "vitest watch",
     "test:coverage": "vitest run --coverage",
-    "ts:check": "tsc --noEmit",
+    "ts:check": "tsc --noEmit -p tsconfig.build.json",
     "check": "pnpm run ts:check && pnpm run test"
   },
   "peerDependencies": {

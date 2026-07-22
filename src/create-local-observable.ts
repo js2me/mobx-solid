@@ -24,9 +24,7 @@ import { observable, type AnnotationsMap } from "mobx";
  * }));
  * ```
  */
-export function createLocalObservable<
-  TStore extends Record<string, unknown>,
->(
+export function createLocalObservable<TStore extends object>(
   initializer: () => TStore,
   annotations?: AnnotationsMap<TStore, never>,
 ): TStore {
