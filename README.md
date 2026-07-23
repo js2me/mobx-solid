@@ -67,13 +67,13 @@ import { enableObservableTracking } from "mobx-solid";
 enableObservableTracking();
 ```
 
-### `fromObservable(getter)`
+### `obs(getter)`
 
 Converts a MobX observable expression into a SolidJS signal accessor. Useful for bridging individual MobX observables into SolidJS's reactive system **without** requiring `enableObservableTracking()`.
 
 ```tsx
 // Without enableObservableTracking — standalone bridge
-const count = fromObservable(() => store.count);
+const count = obs(() => store.count);
 // count() is a SolidJS accessor that updates when store.count changes
 ```
 

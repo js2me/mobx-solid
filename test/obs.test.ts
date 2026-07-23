@@ -1,15 +1,15 @@
 import { describe, it, expect } from "vitest";
 import { observable, action } from "mobx";
 import { createRoot, createSignal, createEffect } from "solid-js";
-import { fromObservable } from "../src/from-observable";
+import { obs } from "../src/obs";
 
-describe("fromObservable", () => {
+describe("obs", () => {
   it("converts a MobX observable getter to a SolidJS accessor", () => {
     const store = observable({ count: 0 });
 
     let accessor: () => number;
     createRoot((dispose) => {
-      accessor = fromObservable(() => store.count);
+      accessor = obs(() => store.count);
     });
 
     expect(accessor!()).toBe(0);
@@ -20,7 +20,7 @@ describe("fromObservable", () => {
 
     let accessor: () => number;
     createRoot((dispose) => {
-      accessor = fromObservable(() => store.count);
+      accessor = obs(() => store.count);
     });
 
     expect(accessor!()).toBe(0);
@@ -42,7 +42,7 @@ describe("fromObservable", () => {
 
     let accessor: () => number;
     createRoot((dispose) => {
-      accessor = fromObservable(() => store.double);
+      accessor = obs(() => store.double);
     });
 
     expect(accessor!()).toBe(0);
@@ -56,7 +56,7 @@ describe("fromObservable", () => {
     const values: number[] = [];
 
     const dispose = createRoot((dispose) => {
-      const accessor = fromObservable(() => store.count);
+      const accessor = obs(() => store.count);
 
       createEffect(() => {
         values.push(accessor());
@@ -82,7 +82,7 @@ describe("fromObservable", () => {
 
     let accessor: () => number[];
     createRoot((dispose) => {
-      accessor = fromObservable(() => [...store.items]);
+      accessor = obs(() => [...store.items]);
     });
 
     expect(accessor!()).toEqual([1, 2, 3]);

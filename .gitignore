@@ -1,6 +1,7 @@
 node_modules/
 dist/
 playgrounds/*/dist/
+docs/.vitepress/
 *.tsbuildinfo
 coverage/
 .vitest/

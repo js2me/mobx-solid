@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import { observable, action } from "mobx";
 import { render, cleanup } from "@solidjs/testing-library";
 import { enableObservableTracking } from "../src/enable-observable-tracking";
-import { fromObservable } from "../src/from-observable";
+import { obs } from "../src/obs";
 
 let bindingInitialized = false;
 function ensureBinding() {
@@ -12,7 +12,7 @@ function ensureBinding() {
   }
 }
 
-describe("fromObservable — real SolidJS component tests", () => {
+describe("obs — real SolidJS component tests", () => {
   beforeEach(() => {
     ensureBinding();
   });
@@ -25,7 +25,7 @@ describe("fromObservable — real SolidJS component tests", () => {
     const store = observable({ count: 0 });
 
     const Counter = () => {
-      const count = fromObservable(() => store.count);
+      const count = obs(() => store.count);
       return <span data-testid="count">{count()}</span>;
     };
 
@@ -45,7 +45,7 @@ describe("fromObservable — real SolidJS component tests", () => {
     });
 
     const Total = () => {
-      const total = fromObservable(() => store.total);
+      const total = obs(() => store.total);
       return <span data-testid="total">{total()}</span>;
     };
 
@@ -60,8 +60,8 @@ describe("fromObservable — real SolidJS component tests", () => {
     const store = observable({ count: 0 });
 
     const Counter = () => {
-      const fromObservableCount = fromObservable(() => store.count);
-      return <span data-testid="count">{fromObservableCount()}</span>;
+      const obsCount = obs(() => store.count);
+      return <span data-testid="count">{obsCount()}</span>;
     };
 
     const { getByTestId } = render(() => <Counter />);

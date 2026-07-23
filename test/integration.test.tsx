@@ -41,6 +41,26 @@ describe("enableObservableTracking — real SolidJS component tests", () => {
     expect(getByTestId("count").textContent).toBe("42");
   });
 
+  it("does not update when MobX value is captured in the component body", async () => {
+    const store = observable({ count: 0 });
+
+    // Body runs once — `n` is a plain snapshot, not tracked
+    const Bad = () => {
+      const n = store.count;
+      return <span data-testid="count">{n}</span>;
+    };
+
+    const { getByTestId } = render(() => <Bad />);
+    expect(getByTestId("count").textContent).toBe("0");
+
+    action(() => {
+      store.count = 42;
+    })();
+
+    // Stays stale — Solid does not re-run the component body
+    expect(getByTestId("count").textContent).toBe("0");
+  });
+
   it("tracks MobX computed values in JSX", async () => {
     const store = observable({
       count: 3,

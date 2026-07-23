@@ -8,7 +8,7 @@ import {
 import { Show, createSignal } from "solid-js";
 import { render, cleanup } from "@solidjs/testing-library";
 import { enableObservableTracking } from "../src/enable-observable-tracking";
-import { fromObservable } from "../src/from-observable";
+import { obs } from "../src/obs";
 import { observerCount } from "./helpers";
 
 let bindingInitialized = false;
@@ -135,7 +135,7 @@ describe("memory / component disposal", () => {
     });
   });
 
-  describe("fromObservable", () => {
+  describe("obs", () => {
     it("autorun is disposed on unmount", () => {
       const store = observable({ count: 0 });
       let unobserved = 0;
@@ -144,7 +144,7 @@ describe("memory / component disposal", () => {
       });
 
       const View = () => {
-        const count = fromObservable(() => store.count);
+        const count = obs(() => store.count);
         return <span data-testid="count">{count()}</span>;
       };
 
@@ -171,7 +171,7 @@ describe("memory / component disposal", () => {
       });
 
       const View = () => {
-        const count = fromObservable(() => store.count);
+        const count = obs(() => store.count);
         return <span>{count()}</span>;
       };
 
@@ -207,7 +207,7 @@ describe("memory / component disposal", () => {
       });
 
       const View = () => {
-        const count = fromObservable(() => store.count);
+        const count = obs(() => store.count);
         return <span>{count()}</span>;
       };
 
@@ -223,13 +223,13 @@ describe("memory / component disposal", () => {
       expect(unobserved).toBe(CYCLES);
     });
 
-    it("multiple fromObservable in one component all clean up", () => {
+    it("multiple obs in one component all clean up", () => {
       const store = observable({ a: 1, b: 2, c: 3 });
 
       const View = () => {
-        const a = fromObservable(() => store.a);
-        const b = fromObservable(() => store.b);
-        const c = fromObservable(() => store.c);
+        const a = obs(() => store.a);
+        const b = obs(() => store.b);
+        const c = obs(() => store.c);
         return (
           <span>
             {a()}+{b()}+{c()}
@@ -250,12 +250,12 @@ describe("memory / component disposal", () => {
   });
 
   describe("combined utilities", () => {
-    it("JSX tracking + fromObservable all clean up together", () => {
+    it("JSX tracking + obs all clean up together", () => {
       const external = observable({ flag: true });
       const local = observable({ count: 0 });
 
       const View = () => {
-        const flag = fromObservable(() => external.flag);
+        const flag = obs(() => external.flag);
         return (
           <span data-testid="v">
             {local.count}:{String(flag())}

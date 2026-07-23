@@ -19,13 +19,17 @@
   "sideEffects": false,
   "scripts": {
     "dev": "vitest watch",
-    "playgrounds": "vite --config playgrounds/csr-only/vite.config.ts",
+    "playground:csr-only": "vite --config playgrounds/csr-only/vite.config.ts",
+    "playground:with-ssr": "vite --config playgrounds/with-ssr/vite.config.ts",
     "build": "vite build",
     "test": "vitest run",
     "test:watch": "vitest watch",
     "test:coverage": "vitest run --coverage",
     "ts:check": "tsc --noEmit -p tsconfig.build.json",
-    "check": "pnpm run ts:check && pnpm run test"
+    "check": "pnpm run ts:check && pnpm run test",
+    "docs:dev": "docusite dev",
+    "docs:build": "docusite build",
+    "docs:preview": "docusite preview"
   },
   "peerDependencies": {
     "mobx": "^6.0.0",
@@ -35,6 +39,7 @@
     "@solidjs/testing-library": "^0.8.10",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.9.1",
+    "docusite": "^0.1.6",
     "jsdom": "^26.1.0",
     "mobx": "^6.16.0",
     "solid-js": "^1.9.0",

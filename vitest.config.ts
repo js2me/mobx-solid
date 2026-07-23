@@ -8,9 +8,9 @@ export default defineConfig({
     globals: true,
     include: [
       "test/enable-observable-tracking.test.ts",
-      "test/from-observable.test.ts",
+      "test/obs.test.ts",
       "test/integration.test.tsx",
-      "test/integration-from-observable.test.tsx",
+      "test/integration-obs.test.tsx",
       "test/hydration.test.tsx",
       "test/mvvm-scenario.test.tsx",
       "test/memory-leak.test.ts",

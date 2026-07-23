@@ -12,7 +12,7 @@ import {
   createSignal,
 } from "solid-js";
 import { enableObservableTracking } from "../src/enable-observable-tracking";
-import { fromObservable } from "../src/from-observable";
+import { obs } from "../src/obs";
 import { observerCount, observerNames } from "./helpers";
 
 let bindingInitialized = false;
@@ -325,7 +325,7 @@ describe("memory / reaction disposal", () => {
     });
   });
 
-  describe("fromObservable", () => {
+  describe("obs", () => {
     it("autorun observes while alive and releases on dispose", () => {
       const store = observable({ count: 0 });
       let observed = 0;
@@ -338,7 +338,7 @@ describe("memory / reaction disposal", () => {
       });
 
       const dispose = createRoot((d) => {
-        fromObservable(() => store.count);
+        obs(() => store.count);
         return d;
       });
 
@@ -355,7 +355,7 @@ describe("memory / reaction disposal", () => {
       const store = observable({ count: 0 });
 
       createRoot(() => {
-        const accessor = fromObservable(() => store.count);
+        const accessor = obs(() => store.count);
         expect(accessor()).toBe(0);
 
         for (let i = 1; i <= 50; i++) {
@@ -373,7 +373,7 @@ describe("memory / reaction disposal", () => {
       let accessor!: () => number;
 
       const dispose = createRoot((d) => {
-        accessor = fromObservable(() => store.count);
+        accessor = obs(() => store.count);
         return d;
       });
 
@@ -393,14 +393,14 @@ describe("memory / reaction disposal", () => {
       expect(observerCount(store, "count")).toBe(0);
     });
 
-    it("disposes each of many independent fromObservable bridges", () => {
+    it("disposes each of many independent obs bridges", () => {
       const store = observable({ count: 0 });
       const disposers: Array<() => void> = [];
 
       for (let i = 0; i < 30; i++) {
         disposers.push(
           createRoot((d) => {
-            fromObservable(() => store.count);
+            obs(() => store.count);
             return d;
           }),
         );
@@ -429,7 +429,7 @@ describe("memory / reaction disposal", () => {
       const CYCLES = 100;
       for (let i = 0; i < CYCLES; i++) {
         const dispose = createRoot((d) => {
-          fromObservable(() => store.count);
+          obs(() => store.count);
           return d;
         });
         expect(observerCount(store, "count")).toBe(1);
@@ -453,7 +453,7 @@ describe("memory / reaction disposal", () => {
       });
 
       const dispose = createRoot((d) => {
-        fromObservable(() => store.x + store.y);
+        obs(() => store.x + store.y);
         return d;
       });
 
@@ -468,7 +468,7 @@ describe("memory / reaction disposal", () => {
       expect(unobservedY).toBe(1);
     });
 
-    it("nested fromObservable inside conditional effect cleans up", () => {
+    it("nested obs inside conditional effect cleans up", () => {
       const store = observable({ count: 0 });
       let setVisible!: (v: boolean) => void;
       let unobserved = 0;
@@ -481,7 +481,7 @@ describe("memory / reaction disposal", () => {
         setVisible = set;
         createEffect(() => {
           if (!visible()) return;
-          fromObservable(() => store.count);
+          obs(() => store.count);
         });
       });
 

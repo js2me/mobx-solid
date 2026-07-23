@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import { observable, action } from "mobx";
 import { render, cleanup } from "@solidjs/testing-library";
 import { enableObservableTracking } from "../src/enable-observable-tracking";
-import { fromObservable } from "../src/from-observable";
+import { obs } from "../src/obs";
 
 let bindingInitialized = false;
 function ensureBinding() {
@@ -33,11 +33,11 @@ describe("Hydration — client-side reactivity after SSR", () => {
     expect(getByTestId("count").textContent).toBe("42");
   });
 
-  it("fromObservable works on client side after SSR concept", async () => {
+  it("obs works on client side after SSR concept", async () => {
     const store = observable({ count: 10 });
 
     const Counter = () => {
-      const count = fromObservable(() => store.count);
+      const count = obs(() => store.count);
       return <span data-testid="count">{count()}</span>;
     };
 

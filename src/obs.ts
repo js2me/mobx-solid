@@ -18,17 +18,17 @@ import { createSignal, onCleanup, type Accessor } from "solid-js";
  *
  * @example
  * ```ts
- * const count = fromObservable(() => store.count);
+ * const count = obs(() => store.count);
  * // count() is a SolidJS accessor that updates when store.count changes
  * ```
  */
-export function fromObservable<T>(getter: () => T): Accessor<T> {
+export function obs<T>(getter: () => T): Accessor<T> {
   const [value, setValue] = createSignal<T>(undefined as unknown as T, {
     equals: false,
   });
 
   const dispose = autorun(() => {
-    setValue(() => getter());
+    setValue(getter);
   });
 
   onCleanup(dispose);
