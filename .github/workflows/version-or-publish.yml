@@ -29,7 +29,6 @@ jobs:
         with:
           check-latest: true
           node-version-file: .nvmrc
-          registry-url: https://registry.npmjs.org
 
       - run: corepack enable
       - run: pnpm i
