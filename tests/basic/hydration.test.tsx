@@ -1,8 +1,8 @@
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import { observable, action } from "mobx";
 import { render, cleanup } from "@solidjs/testing-library";
-import { enableObservableTracking } from "../src/enable-observable-tracking";
-import { obs } from "../src/obs";
+import { enableObservableTracking } from "../../src/enable-observable-tracking";
+import { obs } from "../../src/obs";
 
 let bindingInitialized = false;
 function ensureBinding() {

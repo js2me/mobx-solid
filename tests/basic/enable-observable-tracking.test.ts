@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { observable, action, computed } from "mobx";
 import { createRoot, createSignal, createEffect, createMemo, onCleanup } from "solid-js";
-import { enableObservableTracking, isObservableTrackingEnabled } from "../src/enable-observable-tracking";
+import { enableObservableTracking, isObservableTrackingEnabled } from "../../src/enable-observable-tracking";
 
 // Reset binding state between tests — we need a fresh module state.
 // Since enableExternalSource is global, we can only call enableObservableTracking once per process.

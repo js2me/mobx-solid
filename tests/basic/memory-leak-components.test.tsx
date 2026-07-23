@@ -7,8 +7,8 @@ import {
 } from "mobx";
 import { Show, createSignal } from "solid-js";
 import { render, cleanup } from "@solidjs/testing-library";
-import { enableObservableTracking } from "../src/enable-observable-tracking";
-import { obs } from "../src/obs";
+import { enableObservableTracking } from "../../src/enable-observable-tracking";
+import { obs } from "../../src/obs";
 import { observerCount } from "./helpers";
 
 let bindingInitialized = false;

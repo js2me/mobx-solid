@@ -4,6 +4,7 @@ export default defineConfig({
   title: "mobx-solid",
   description:
     "MobX bindings for SolidJS — reactive state management with fine-grained UI updates",
+  base: "/mobx-solid/",
   colors: {
     light: ["#2c4f7c", "#ea6a1f", "#66e2d5"],
     dark: ["#4f87c7", "#ff8c42", "#66e2d5"],

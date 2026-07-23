@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { observable, action } from "mobx";
 import { createRoot, createSignal, createEffect } from "solid-js";
-import { obs } from "../src/obs";
+import { obs } from "../../src/obs";
 
 describe("obs", () => {
   it("converts a MobX observable getter to a SolidJS accessor", () => {

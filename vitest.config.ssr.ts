@@ -4,8 +4,9 @@ import solidPlugin from "vite-plugin-solid";
 export default defineConfig({
   plugins: [solidPlugin({ ssr: true })],
   test: {
+    name: "ssr",
     environment: "node",
     globals: true,
-    include: ["test/ssr.test.tsx"],
+    include: ["tests/basic/ssr.test.tsx"],
   },
 });

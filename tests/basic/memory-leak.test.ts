@@ -11,8 +11,8 @@ import {
   createMemo,
   createSignal,
 } from "solid-js";
-import { enableObservableTracking } from "../src/enable-observable-tracking";
-import { obs } from "../src/obs";
+import { enableObservableTracking } from "../../src/enable-observable-tracking";
+import { obs } from "../../src/obs";
 import { observerCount, observerNames } from "./helpers";
 
 let bindingInitialized = false;

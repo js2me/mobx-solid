@@ -4,17 +4,14 @@ import solidPlugin from "vite-plugin-solid";
 export default defineConfig({
   plugins: [solidPlugin()],
   test: {
+    name: "unit",
     environment: "jsdom",
     globals: true,
-    include: [
-      "test/enable-observable-tracking.test.ts",
-      "test/obs.test.ts",
-      "test/integration.test.tsx",
-      "test/integration-obs.test.tsx",
-      "test/hydration.test.tsx",
-      "test/mvvm-scenario.test.tsx",
-      "test/memory-leak.test.ts",
-      "test/memory-leak-components.test.tsx",
+    include: ["tests/**/*.test.{ts,tsx}"],
+    exclude: [
+      "tests/basic/ssr.test.tsx",
+      "tests/scenarios/obs-without-global-tracking.test.tsx",
+      "tests/scenarios/real-hydration.test.tsx",
     ],
   },
 });
