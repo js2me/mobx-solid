@@ -10,7 +10,7 @@ export default defineConfig({
   plugins: [solidPlugin()],
   resolve: {
     alias: {
-      "mobx-solid": resolve(root, "../src/index.ts"),
+      "mobx-solid": resolve(root, "../../src/index.ts"),
     },
   },
   server: {

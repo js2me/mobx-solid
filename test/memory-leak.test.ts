@@ -13,7 +13,6 @@ import {
 } from "solid-js";
 import { enableObservableTracking } from "../src/enable-observable-tracking";
 import { fromObservable } from "../src/from-observable";
-import { createLocalObservable } from "../src/create-local-observable";
 import { observerCount, observerNames } from "./helpers";
 
 let bindingInitialized = false;
@@ -498,99 +497,6 @@ describe("memory / reaction disposal", () => {
       setVisible(false);
       expect(observerCount(store, "count")).toBe(0);
       expect(unobserved).toBe(2);
-    });
-  });
-
-  describe("createLocalObservable", () => {
-    it("creates no observers until something tracks it", () => {
-      const store = createLocalObservable(() => ({ count: 0 }));
-      expect(observerCount(store, "count")).toBe(0);
-    });
-
-    it("releases observers when Solid tracking root is disposed", () => {
-      const store = createLocalObservable(() => ({
-        count: 0,
-        get double() {
-          return this.count * 2;
-        },
-      }));
-      let unobservedCount = 0;
-      onBecomeUnobserved(store, "count", () => {
-        unobservedCount++;
-      });
-
-      const dispose = createRoot((d) => {
-        createMemo(() => store.double)();
-        return d;
-      });
-
-      expect(observerCount(store, "count")).toBeGreaterThan(0);
-
-      dispose();
-
-      expect(observerCount(store, "count")).toBe(0);
-      expect(unobservedCount).toBe(1);
-    });
-
-    it("does not leak across createLocalObservable + tracking cycles", () => {
-      let observed = 0;
-      let unobserved = 0;
-      const CYCLES = 50;
-
-      for (let i = 0; i < CYCLES; i++) {
-        const store = createLocalObservable(() => ({ count: 0 }));
-        onBecomeObserved(store, "count", () => {
-          observed++;
-        });
-        onBecomeUnobserved(store, "count", () => {
-          unobserved++;
-        });
-
-        const dispose = createRoot((d) => {
-          createMemo(() => store.count)();
-          createEffect(() => {
-            void store.count;
-          });
-          return d;
-        });
-
-        expect(observerCount(store, "count")).toBe(2);
-        dispose();
-        expect(observerCount(store, "count")).toBe(0);
-      }
-
-      expect(observed).toBe(CYCLES);
-      expect(unobserved).toBe(CYCLES);
-    });
-
-    it("many local stores dispose independently", () => {
-      const stores = Array.from({ length: 20 }, () =>
-        createLocalObservable(() => ({ count: 0 })),
-      );
-      const disposers = stores.map((store) =>
-        createRoot((d) => {
-          createMemo(() => store.count)();
-          return d;
-        }),
-      );
-
-      for (const store of stores) {
-        expect(observerCount(store, "count")).toBe(1);
-      }
-
-      disposers[0]();
-      expect(observerCount(stores[0], "count")).toBe(0);
-      for (let i = 1; i < stores.length; i++) {
-        expect(observerCount(stores[i], "count")).toBe(1);
-      }
-
-      for (let i = 1; i < disposers.length; i++) {
-        disposers[i]();
-      }
-
-      for (const store of stores) {
-        expect(observerCount(store, "count")).toBe(0);
-      }
     });
   });
 });

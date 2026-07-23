@@ -111,11 +111,11 @@ export class TodoListVM {
     const samples = [
       ["Ship mobx-solid playground", false],
       ["Wire enableObservableTracking", true],
-      ["Demo observer + Observer", false],
-      ["Show createLocalObservable", false],
-      ["Bridge with fromObservable", false],
+      ["Read MobX directly in JSX", false],
       ["Add filter & pagination", true],
       ["Simulate async sync", false],
+      ["Theme via local MobX store", false],
+      ["Fine-grained Solid updates", false],
     ] as const;
 
     for (const [title, done] of samples) {

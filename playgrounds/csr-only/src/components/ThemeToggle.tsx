@@ -1,13 +1,13 @@
-import { createLocalObservable } from "mobx-solid";
+import { makeAutoObservable } from "mobx";
 import { createEffect } from "solid-js";
 
 export function ThemeToggle() {
-  const theme = createLocalObservable(() => ({
+  const theme = makeAutoObservable({
     mode: (localStorage.getItem("mobx-solid-theme") as "light" | "dark") || "dark",
     toggle() {
       this.mode = this.mode === "dark" ? "light" : "dark";
     },
-  }));
+  });
 
   createEffect(() => {
     document.documentElement.dataset.theme = theme.mode;

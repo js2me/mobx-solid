@@ -13,7 +13,7 @@
     "jsxImportSource": "solid-js",
     "noEmit": true,
     "paths": {
-      "mobx-solid": ["../src/index.ts"]
+      "mobx-solid": ["../../src/index.ts"]
     }
   },
   "include": ["src"]

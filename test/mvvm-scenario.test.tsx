@@ -10,8 +10,6 @@ import {
 } from "mobx";
 import { render, cleanup } from "@solidjs/testing-library";
 import { enableObservableTracking } from "../src/enable-observable-tracking";
-import { observer } from "../src/observer";
-import { createLocalObservable } from "../src/create-local-observable";
 
 let bindingInitialized = false;
 function ensureBinding() {
@@ -445,7 +443,7 @@ describe("MVVM scenario — TodoListVM with SolidJS components", () => {
       vm.addTodo("Buy milk");
       vm.addTodo("Walk dog");
 
-      const TodoListView = observer(() => (
+      const TodoListView = () => (
         <ul data-testid="todo-list">
           {vm.paginatedTodos.map((todo) => (
             <li data-testid={`todo-${todo.id}`}>
@@ -454,7 +452,7 @@ describe("MVVM scenario — TodoListVM with SolidJS components", () => {
             </li>
           ))}
         </ul>
-      ));
+      );
 
       const { getByTestId } = render(() => <TodoListView />);
       expect(getByTestId("todo-list").children.length).toBe(2);
@@ -466,13 +464,13 @@ describe("MVVM scenario — TodoListVM with SolidJS components", () => {
       const vm = new TodoListVM();
       vm.addTodo("Buy milk");
 
-      const TodoListView = observer(() => (
+      const TodoListView = () => (
         <div>
           <span data-testid="active-count">{vm.activeCount}</span>
           <span data-testid="completed-count">{vm.completedCount}</span>
           <span data-testid="status">{vm.todos[0].done ? "done" : "pending"}</span>
         </div>
-      ));
+      );
 
       const { getByTestId } = render(() => <TodoListView />);
       expect(getByTestId("active-count").textContent).toBe("1");
@@ -488,7 +486,7 @@ describe("MVVM scenario — TodoListVM with SolidJS components", () => {
     it("reactively updates when a todo is added via action", async () => {
       const vm = new TodoListVM();
 
-      const TodoListView = observer(() => (
+      const TodoListView = () => (
         <div>
           <span data-testid="total">{vm.totalCount}</span>
           <ul data-testid="list">
@@ -497,7 +495,7 @@ describe("MVVM scenario — TodoListVM with SolidJS components", () => {
             ))}
           </ul>
         </div>
-      ));
+      );
 
       const { getByTestId } = render(() => <TodoListView />);
       expect(getByTestId("total").textContent).toBe("0");
@@ -517,7 +515,7 @@ describe("MVVM scenario — TodoListVM with SolidJS components", () => {
       vm.addTodo("Completed todo");
       action(() => vm.todos[1].toggle())();
 
-      const FilteredView = observer(() => (
+      const FilteredView = () => (
         <div>
           <span data-testid="filter">{vm.filterVM.filter}</span>
           <ul data-testid="filtered-list">
@@ -526,7 +524,7 @@ describe("MVVM scenario — TodoListVM with SolidJS components", () => {
             ))}
           </ul>
         </div>
-      ));
+      );
 
       const { getByTestId } = render(() => <FilteredView />);
       expect(getByTestId("filter").textContent).toBe("all");
@@ -548,7 +546,7 @@ describe("MVVM scenario — TodoListVM with SolidJS components", () => {
         vm.addTodo(`Item ${i}`);
       }
 
-      const PaginatedView = observer(() => (
+      const PaginatedView = () => (
         <div>
           <span data-testid="page">{vm.paginationVM.page}</span>
           <span data-testid="total-pages">{vm.totalPages}</span>
@@ -560,7 +558,7 @@ describe("MVVM scenario — TodoListVM with SolidJS components", () => {
           <span data-testid="can-prev">{vm.canGoPrev ? "yes" : "no"}</span>
           <span data-testid="can-next">{vm.canGoNext ? "yes" : "no"}</span>
         </div>
-      ));
+      );
 
       const { getByTestId } = render(() => <PaginatedView />);
       expect(getByTestId("page").textContent).toBe("1");
@@ -579,12 +577,12 @@ describe("MVVM scenario — TodoListVM with SolidJS components", () => {
     it("reactively updates loading/error state via composed syncVM", async () => {
       const vm = new TodoListVM();
 
-      const SyncView = observer(() => (
+      const SyncView = () => (
         <div>
           <span data-testid="loading">{vm.syncVM.loading ? "loading" : "idle"}</span>
           <span data-testid="error">{vm.syncVM.error ?? "none"}</span>
         </div>
-      ));
+      );
 
       const { getByTestId } = render(() => <SyncView />);
       expect(getByTestId("loading").textContent).toBe("idle");
@@ -604,7 +602,7 @@ describe("MVVM scenario — TodoListVM with SolidJS components", () => {
     it("full MVVM flow: add → toggle → filter → paginate → clear", async () => {
       const vm = new TodoListVM();
 
-      const FullApp = observer(() => (
+      const FullApp = () => (
         <div>
           <span data-testid="total">{vm.totalCount}</span>
           <span data-testid="active">{vm.activeCount}</span>
@@ -619,7 +617,7 @@ describe("MVVM scenario — TodoListVM with SolidJS components", () => {
             ))}
           </ul>
         </div>
-      ));
+      );
 
       const { getByTestId } = render(() => <FullApp />);
 
@@ -656,45 +654,11 @@ describe("MVVM scenario — TodoListVM with SolidJS components", () => {
       expect(getByTestId("visible-list").children.length).toBe(3);
     });
 
-    it("VM created once in component via createLocalObservable", async () => {
-      const App = observer(() => {
-        const vm = createLocalObservable(() => {
-          const v = new TodoListVM();
-          // Seed initial data
-          v.addTodo("Initial task");
-          return v;
-        });
-
-        return (
-          <div>
-            <span data-testid="total">{vm.totalCount}</span>
-            <button data-testid="add-btn" onClick={action(() => vm.addTodo("New task"))}>
-              Add
-            </button>
-            <button data-testid="toggle-btn" onClick={action(() => vm.todos[0]?.toggle())}>
-              Toggle first
-            </button>
-            <span data-testid="status">{vm.todos[0]?.done ? "done" : "pending"}</span>
-          </div>
-        );
-      });
-
-      const { getByTestId } = render(() => <App />);
-      expect(getByTestId("total").textContent).toBe("1");
-      expect(getByTestId("status").textContent).toBe("pending");
-
-      getByTestId("add-btn").click();
-      expect(getByTestId("total").textContent).toBe("2");
-
-      getByTestId("toggle-btn").click();
-      expect(getByTestId("status").textContent).toBe("done");
-    });
-
     it("editing flow: start → change draft → save", async () => {
       const vm = new TodoListVM();
       vm.addTodo("Original title");
 
-      const EditView = observer(() => (
+      const EditView = () => (
         <div>
           <span data-testid="title">{vm.todos[0].title}</span>
           <span data-testid="editing">{vm.isEditing ? "editing" : "viewing"}</span>
@@ -702,7 +666,7 @@ describe("MVVM scenario — TodoListVM with SolidJS components", () => {
             <span data-testid="draft">{vm.draftTitle}</span>
           )}
         </div>
-      ));
+      );
 
       const { getByTestId, queryByTestId } = render(() => <EditView />);
       expect(getByTestId("title").textContent).toBe("Original title");
@@ -726,12 +690,12 @@ describe("MVVM scenario — TodoListVM with SolidJS components", () => {
       const vm = new TodoListVM();
       vm.addTodo("Original");
 
-      const EditView = observer(() => (
+      const EditView = () => (
         <div>
           <span data-testid="title">{vm.todos[0].title}</span>
           <span data-testid="editing">{vm.isEditing ? "editing" : "viewing"}</span>
         </div>
-      ));
+      );
 
       const { getByTestId } = render(() => <EditView />);
 
@@ -749,13 +713,13 @@ describe("MVVM scenario — TodoListVM with SolidJS components", () => {
       vm.addTodo("B");
       vm.addTodo("C");
 
-      const ToggleAllView = observer(() => (
+      const ToggleAllView = () => (
         <div>
           <span data-testid="all-done">{vm.allCompleted ? "yes" : "no"}</span>
           <span data-testid="active">{vm.activeCount}</span>
           <span data-testid="completed">{vm.completedCount}</span>
         </div>
-      ));
+      );
 
       const { getByTestId } = render(() => <ToggleAllView />);
       expect(getByTestId("all-done").textContent).toBe("no");
@@ -779,7 +743,7 @@ describe("MVVM scenario — TodoListVM with SolidJS components", () => {
       vm.addTodo("B");
       vm.addTodo("C");
 
-      const ListView = observer(() => (
+      const ListView = () => (
         <ul data-testid="list">
           {vm.todos.map((todo) => (
             <li key={todo.id} data-testid={`item-${todo.id}`}>
@@ -787,7 +751,7 @@ describe("MVVM scenario — TodoListVM with SolidJS components", () => {
             </li>
           ))}
         </ul>
-      ));
+      );
 
       const { getByTestId } = render(() => <ListView />);
       expect(getByTestId("list").children.length).toBe(3);

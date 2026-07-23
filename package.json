@@ -19,7 +19,7 @@
   "sideEffects": false,
   "scripts": {
     "dev": "vitest watch",
-    "playground": "vite --config playground/vite.config.ts",
+    "playgrounds": "vite --config playgrounds/csr-only/vite.config.ts",
     "build": "vite build",
     "test": "vitest run",
     "test:watch": "vitest watch",

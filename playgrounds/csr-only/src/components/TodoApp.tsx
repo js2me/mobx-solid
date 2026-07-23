@@ -24,8 +24,7 @@ export function TodoApp() {
         <h1>Playground</h1>
         <p class="lede">
           SolidJS UI driven by a MobX MVVM store — via{" "}
-          <code>enableObservableTracking</code> and{" "}
-          <code>createLocalObservable</code>.
+          <code>enableObservableTracking</code>.
         </p>
       </header>
 
@@ -144,10 +143,7 @@ export function TodoApp() {
             <code>enableObservableTracking()</code> — once in <code>main.tsx</code>
           </li>
           <li>
-            JSX + <code>enableObservableTracking()</code> — TodoApp, TodoItem, StatsBar
-          </li>
-          <li>
-            <code>createLocalObservable()</code> — ThemeToggle
+            JSX reads MobX directly — TodoApp, TodoItem, StatsBar, ThemeToggle
           </li>
         </ul>
       </aside>

@@ -1,6 +1,6 @@
 node_modules/
 dist/
-playground/dist/
+playgrounds/*/dist/
 *.tsbuildinfo
 coverage/
 .vitest/
