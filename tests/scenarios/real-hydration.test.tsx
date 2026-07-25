@@ -7,7 +7,7 @@
  * (node / ssr build); browser builds cannot call `renderToString` in jsdom.
  */
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
-import { observable, action } from "mobx";
+import { observable, action, onBecomeUnobserved } from "mobx";
 import { sharedConfig } from "solid-js";
 import { hydrate } from "solid-js/web";
 import { enableObservableTracking } from "../../src/enable-observable-tracking";
@@ -152,5 +152,60 @@ describe("scenario: real hydration (SSR markup → hydrate)", () => {
 
     dispose();
     expect(observerCount(store, "count")).toBe(0);
+  });
+
+  describe("obs() hydration", () => {
+    it("obs() autorun is cleaned up when hydrated tree is disposed", () => {
+      const store = observable({ count: 0 });
+      let unobserved = 0;
+
+      onBecomeUnobserved(store, "count", () => { unobserved++; });
+
+      const Counter = () => {
+        const count = obs(() => store.count);
+        return <span data-testid="count">{count()}</span>;
+      };
+
+      const { dispose } = hydrateInto(
+        `<span data-hk="00" data-testid="count">0</span>`,
+        () => <Counter />,
+      );
+
+      expect(observerCount(store, "count")).toBe(1);
+
+      action(() => { store.count = 5; })();
+      expect(observerCount(store, "count")).toBe(1);
+
+      dispose();
+      expect(observerCount(store, "count")).toBe(0);
+      expect(unobserved).toBe(1);
+    });
+
+    it("obs() hydrate with computed value", () => {
+      const store = observable({
+        items: [1, 2, 3],
+        get total() {
+          return this.items.reduce((sum, i) => sum + i, 0);
+        },
+      });
+
+      const Total = () => {
+        const total = obs(() => store.total);
+        return <span data-testid="total">{total()}</span>;
+      };
+
+      const { dispose } = hydrateInto(
+        `<span data-hk="00" data-testid="total">6</span>`,
+        () => <Total />,
+      );
+
+      const el = document.querySelector("[data-testid=total]")!;
+      expect(el.textContent).toBe("6");
+
+      action(() => { store.items.push(4); })();
+      expect(el.textContent).toBe("10");
+
+      dispose();
+    });
   });
 });

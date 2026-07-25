@@ -3,6 +3,7 @@ import { observable, action } from "mobx";
 import { createRoot, createSignal, createEffect, createMemo } from "solid-js";
 import { enableObservableTracking } from "../../src/enable-observable-tracking";
 import { obs } from "../../src/obs";
+import { observerCount } from "./helpers";
 
 describe("obs", () => {
   beforeEach(() => {
@@ -94,6 +95,184 @@ describe("obs", () => {
 
     action(() => { store.items.push(4); })();
     expect(accessor!()).toEqual([1, 2, 3, 4]);
+  });
+
+  describe("deep nested observables", () => {
+    it("obs() tracks deeply nested MobX property", () => {
+      const store = observable({ user: { profile: { name: "Alice" } } });
+
+      let accessor: () => string;
+      createRoot((d) => {
+        accessor = obs(() => store.user.profile.name);
+        return d;
+      });
+
+      expect(accessor()).toBe("Alice");
+
+      action(() => { store.user.profile.name = "Bob"; })();
+      expect(accessor()).toBe("Bob");
+
+      action(() => { store.user = { profile: { name: "Carol" } }; })();
+      expect(accessor()).toBe("Carol");
+    });
+
+    it("obs() cleans up all intermediate observers on dispose", () => {
+      const store = observable({ user: { profile: { name: "Alice" } } });
+
+      const dispose = createRoot((d) => {
+        obs(() => store.user.profile.name);
+        return d;
+      });
+
+      expect(observerCount(store, "user")).toBe(1);
+      expect(observerCount(store.user, "profile")).toBe(1);
+      expect(observerCount(store.user.profile, "name")).toBe(1);
+
+      dispose();
+
+      expect(observerCount(store, "user")).toBe(0);
+      expect(observerCount(store.user, "profile")).toBe(0);
+      expect(observerCount(store.user.profile, "name")).toBe(0);
+    });
+  });
+
+  describe("observable.array mutations", () => {
+    it("splice — remove and insert", () => {
+      const store = observable({ items: [1, 2, 3, 4] });
+
+      let accessor: () => number[];
+      createRoot((d) => {
+        accessor = obs(() => [...store.items]);
+        return d;
+      });
+
+      expect(accessor()).toEqual([1, 2, 3, 4]);
+
+      action(() => { store.items.splice(1, 2, 10, 20); })();
+      expect(accessor()).toEqual([1, 10, 20, 4]);
+    });
+
+    it("shift", () => {
+      const store = observable({ items: [1, 2, 3] });
+
+      let accessor: () => number[];
+      createRoot((d) => {
+        accessor = obs(() => [...store.items]);
+        return d;
+      });
+
+      action(() => { store.items.shift(); })();
+      expect(accessor()).toEqual([2, 3]);
+    });
+
+    it("unshift", () => {
+      const store = observable({ items: [2, 3] });
+
+      let accessor: () => number[];
+      createRoot((d) => {
+        accessor = obs(() => [...store.items]);
+        return d;
+      });
+
+      expect(accessor()).toEqual([2, 3]);
+
+      action(() => { store.items.unshift(1, 0); })();
+      expect(accessor()).toEqual([1, 0, 2, 3]);
+    });
+
+    it("replace (whole array)", () => {
+      const store = observable({ items: [1, 2, 3] });
+
+      let accessor: () => number[];
+      createRoot((d) => {
+        accessor = obs(() => [...store.items]);
+        return d;
+      });
+
+      expect(accessor()).toEqual([1, 2, 3]);
+
+      action(() => { store.items = [10, 20]; })();
+      expect(accessor()).toEqual([10, 20]);
+    });
+
+    it("clear", () => {
+      const store = observable({ items: [1, 2, 3] });
+
+      let accessor: () => number[];
+      createRoot((d) => {
+        accessor = obs(() => [...store.items]);
+        return d;
+      });
+
+      action(() => { store.items.clear(); })();
+      expect(accessor()).toEqual([]);
+    });
+
+    it("remove", () => {
+      const store = observable({ items: [1, 2, 3, 2] });
+
+      let accessor: () => number[];
+      createRoot((d) => {
+        accessor = obs(() => [...store.items]);
+        return d;
+      });
+
+      action(() => { store.items.remove(2); })();
+      expect(accessor()).toEqual([1, 3, 2]); // removes first occurrence
+    });
+
+    it("enableObservableTracking — createEffect tracks array mutations", () => {
+      const store = observable({ items: ["a", "b", "c"] });
+      const values: string[][] = [];
+
+      createRoot((d) => {
+        createEffect(() => { values.push([...store.items]); });
+        return d;
+      });
+
+      expect(values).toEqual([["a", "b", "c"]]);
+
+      action(() => { store.items.splice(1, 1, "x"); })();
+      expect(values[values.length - 1]).toEqual(["a", "x", "c"]);
+
+      action(() => { store.items.push("d"); })();
+      expect(values[values.length - 1]).toEqual(["a", "x", "c", "d"]);
+    });
+
+    it("enableObservableTracking — createMemo tracks array length", () => {
+      const store = observable({ items: [1, 2] });
+      let memo!: () => number;
+
+      createRoot((d) => {
+        memo = createMemo(() => store.items.length);
+        return d;
+      });
+
+      expect(memo()).toBe(2);
+
+      action(() => { store.items.push(3); })();
+      expect(memo()).toBe(3);
+
+      action(() => { store.items.shift(); })();
+      expect(memo()).toBe(2);
+    });
+
+    it("obs() + enableObservableTracking — both bridges react to splice", () => {
+      const store = observable({ items: [1, 2] });
+      const obsValues: number[][] = [];
+      const eotValues: number[][] = [];
+
+      createRoot((d) => {
+        const accessor = obs(() => [...store.items]);
+        createEffect(() => { eotValues.push([...store.items]); });
+        createEffect(() => { obsValues.push(accessor()); });
+        return d;
+      });
+
+      action(() => { store.items.splice(1, 0, 5); })();
+      expect(obsValues[obsValues.length - 1]).toEqual([1, 5, 2]);
+      expect(eotValues[eotValues.length - 1]).toEqual([1, 5, 2]);
+    });
   });
 
   describe("primitive types", () => {
