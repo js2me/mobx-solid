@@ -307,4 +307,95 @@ describe("memory / component disposal", () => {
       expect(observerCount(store, "items")).toBe(0);
     });
   });
+
+  describe("double bridge — obs() + JSX on same property", () => {
+    it("same store property observed by both obs() and JSX, 2 observers exist, both clean up on unmount", () => {
+      const store = observable({ count: 0 });
+      let observed = 0;
+      let unobserved = 0;
+      onBecomeObserved(store, "count", () => { observed++; });
+      onBecomeUnobserved(store, "count", () => { unobserved++; });
+
+      const View = () => {
+        const count = obs(() => store.count);
+        return (
+          <span data-testid="v">
+            {store.count}:{String(count())}
+          </span>
+        );
+      };
+
+      const { unmount, getByTestId } = render(() => <View />);
+      expect(getByTestId("v").textContent).toBe("0:0");
+
+      // JSX tracking creates ≥1 observer (Solid may create multiple internal nodes)
+      // obs() creates exactly 1 autorun — total > 1
+      expect(observerCount(store, "count")).toBeGreaterThan(1);
+      // onBecomeObserved fires once (0→≥1 transition), not per-observer
+      expect(observed).toBeGreaterThanOrEqual(1);
+
+      // Both bridges propagate updates independently
+      action(() => { store.count = 5; })();
+      expect(getByTestId("v").textContent).toBe("5:5");
+
+      unmount();
+      expect(observerCount(store, "count")).toBe(0);
+      // onBecomeUnobserved fires once (≥1→0 transition), not per-observer
+      expect(unobserved).toBeGreaterThanOrEqual(1);
+    });
+
+    it("same property via obs() + JSX — Show toggling cleans up both bridges", () => {
+      const store = observable({ count: 0 });
+      const [visible, setVisible] = createSignal(true);
+      let unobserved = 0;
+      onBecomeUnobserved(store, "count", () => { unobserved++; });
+
+      const View = () => {
+        const count = obs(() => store.count);
+        return <span>{store.count}:{String(count())}</span>;
+      };
+
+      render(() => (
+        <Show when={visible()}>
+          <View />
+        </Show>
+      ));
+
+      expect(observerCount(store, "count")).toBeGreaterThan(1);
+
+      setVisible(false);
+      expect(observerCount(store, "count")).toBe(0);
+      expect(unobserved).toBeGreaterThanOrEqual(1);
+
+      setVisible(true);
+      expect(observerCount(store, "count")).toBeGreaterThan(1);
+
+      setVisible(false);
+      expect(observerCount(store, "count")).toBe(0);
+    });
+
+    it("double bridge on same property — mount/unmount cycles do not accumulate", () => {
+      const store = observable({ count: 0 });
+      let observed = 0;
+      let unobserved = 0;
+      onBecomeObserved(store, "count", () => { observed++; });
+      onBecomeUnobserved(store, "count", () => { unobserved++; });
+
+      const View = () => {
+        const count = obs(() => store.count);
+        return <span>{store.count}:{String(count())}</span>;
+      };
+
+      const CYCLES = 20;
+      for (let i = 0; i < CYCLES; i++) {
+        const { unmount } = render(() => <View />);
+        expect(observerCount(store, "count")).toBeGreaterThan(1);
+        unmount();
+        expect(observerCount(store, "count")).toBe(0);
+      }
+
+      expect(observed).toBe(unobserved);
+      expect(observerCount(store, "count")).toBe(0);
+    });
+  });
 });

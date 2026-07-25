@@ -9,5 +9,5 @@
     "rootDir": "src"
   },
   "include": ["src"],
-  "exclude": ["test", "dist", "node_modules"]
+  "exclude": ["tests", "dist", "node_modules"]
 }

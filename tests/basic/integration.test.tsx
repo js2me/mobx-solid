@@ -160,7 +160,7 @@ describe("enableObservableTracking — real SolidJS component tests", () => {
     const List = () => (
       <ul data-testid="list">
         {store.items.map((item) => (
-          <li key={item}>{item}</li>
+          <li>{item}</li>
         ))}
       </ul>
     );

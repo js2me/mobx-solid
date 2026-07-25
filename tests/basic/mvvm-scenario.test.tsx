@@ -491,7 +491,7 @@ describe("MVVM scenario — TodoListVM with SolidJS components", () => {
           <span data-testid="total">{vm.totalCount}</span>
           <ul data-testid="list">
             {vm.todos.map((todo) => (
-              <li key={todo.id}>{todo.title}</li>
+              <li>{todo.title}</li>
             ))}
           </ul>
         </div>
@@ -520,7 +520,7 @@ describe("MVVM scenario — TodoListVM with SolidJS components", () => {
           <span data-testid="filter">{vm.filterVM.filter}</span>
           <ul data-testid="filtered-list">
             {vm.filteredTodos.map((todo) => (
-              <li key={todo.id}>{todo.title}</li>
+              <li>{todo.title}</li>
             ))}
           </ul>
         </div>
@@ -552,7 +552,7 @@ describe("MVVM scenario — TodoListVM with SolidJS components", () => {
           <span data-testid="total-pages">{vm.totalPages}</span>
           <ul data-testid="page-items">
             {vm.paginatedTodos.map((todo) => (
-              <li key={todo.id}>{todo.title}</li>
+              <li>{todo.title}</li>
             ))}
           </ul>
           <span data-testid="can-prev">{vm.canGoPrev ? "yes" : "no"}</span>
@@ -610,7 +610,7 @@ describe("MVVM scenario — TodoListVM with SolidJS components", () => {
           <span data-testid="filter">{vm.filterVM.filter}</span>
           <ul data-testid="visible-list">
             {vm.paginatedTodos.map((todo) => (
-              <li key={todo.id} data-testid={`item-${todo.id}`}>
+              <li data-testid={`item-${todo.id}`}>
                 <span>{todo.title}</span>
                 <span>{todo.done ? "✓" : "○"}</span>
               </li>
@@ -746,7 +746,7 @@ describe("MVVM scenario — TodoListVM with SolidJS components", () => {
       const ListView = () => (
         <ul data-testid="list">
           {vm.todos.map((todo) => (
-            <li key={todo.id} data-testid={`item-${todo.id}`}>
+            <li data-testid={`item-${todo.id}`}>
               {todo.title}
             </li>
           ))}
