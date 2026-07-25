@@ -5,17 +5,9 @@ import { enableObservableTracking } from "../../src/enable-observable-tracking";
 import { obs } from "../../src/obs";
 import { observerCount } from "./helpers";
 
-let bindingInitialized = false;
-function ensureBinding() {
-  if (!bindingInitialized) {
-    enableObservableTracking();
-    bindingInitialized = true;
-  }
-}
-
 describe("SSR — renderToString with MobX observables", () => {
   beforeEach(() => {
-    ensureBinding();
+    enableObservableTracking();
   });
 
   it("renders initial MobX state to string", () => {

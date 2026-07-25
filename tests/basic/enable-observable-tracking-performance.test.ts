@@ -17,14 +17,6 @@ const BUDGET = {
   wideDeps200: 200,
 } as const;
 
-let bindingInitialized = false;
-function ensureBinding() {
-  if (!bindingInitialized) {
-    enableObservableTracking();
-    bindingInitialized = true;
-  }
-}
-
 function median(samples: number[]): number {
   const sorted = [...samples].sort((a, b) => a - b);
   return sorted[Math.floor(sorted.length / 2)]!;
@@ -40,7 +32,7 @@ function measureMedian(runs: number, fn: () => number): number {
 
 describe("enableObservableTracking performance", () => {
   beforeEach(() => {
-    ensureBinding();
+    enableObservableTracking();
   });
 
   it(`creates 1000 memos under ${BUDGET.create1000}ms`, () => {

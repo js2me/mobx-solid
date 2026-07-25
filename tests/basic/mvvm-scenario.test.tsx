@@ -11,14 +11,6 @@ import {
 import { render, cleanup } from "@solidjs/testing-library";
 import { enableObservableTracking } from "../../src/enable-observable-tracking";
 
-let bindingInitialized = false;
-function ensureBinding() {
-  if (!bindingInitialized) {
-    enableObservableTracking();
-    bindingInitialized = true;
-  }
-}
-
 // ─────────────────────────────────────────────────────────────
 // Domain models (pure data, no VM logic)
 // ─────────────────────────────────────────────────────────────
@@ -271,7 +263,7 @@ class TodoListVM {
 
 describe("MVVM scenario — TodoListVM with SolidJS components", () => {
   beforeEach(() => {
-    ensureBinding();
+    enableObservableTracking();
   });
 
   afterEach(() => {

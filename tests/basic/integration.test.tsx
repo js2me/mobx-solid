@@ -3,17 +3,9 @@ import { observable, action } from "mobx";
 import { render, cleanup } from "@solidjs/testing-library";
 import { enableObservableTracking } from "../../src/enable-observable-tracking";
 
-let bindingInitialized = false;
-function ensureBinding() {
-  if (!bindingInitialized) {
-    enableObservableTracking();
-    bindingInitialized = true;
-  }
-}
-
 describe("enableObservableTracking — real SolidJS component tests", () => {
   beforeEach(() => {
-    ensureBinding();
+    enableObservableTracking();
   });
 
   afterEach(() => {

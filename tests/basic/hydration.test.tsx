@@ -4,17 +4,9 @@ import { render, cleanup } from "@solidjs/testing-library";
 import { enableObservableTracking } from "../../src/enable-observable-tracking";
 import { obs } from "../../src/obs";
 
-let bindingInitialized = false;
-function ensureBinding() {
-  if (!bindingInitialized) {
-    enableObservableTracking();
-    bindingInitialized = true;
-  }
-}
-
 describe("Hydration — client-side reactivity after SSR", () => {
   beforeEach(() => {
-    ensureBinding();
+    enableObservableTracking();
   });
 
   afterEach(() => {

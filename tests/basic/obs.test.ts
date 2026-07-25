@@ -1,9 +1,14 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, beforeEach } from "vitest";
 import { observable, action } from "mobx";
-import { createRoot, createSignal, createEffect } from "solid-js";
+import { createRoot, createSignal, createEffect, createMemo } from "solid-js";
+import { enableObservableTracking } from "../../src/enable-observable-tracking";
 import { obs } from "../../src/obs";
 
 describe("obs", () => {
+  beforeEach(() => {
+    enableObservableTracking();
+  });
+
   it("converts a MobX observable getter to a SolidJS accessor", () => {
     const store = observable({ count: 0 });
 
@@ -90,4 +95,311 @@ describe("obs", () => {
     action(() => { store.items.push(4); })();
     expect(accessor!()).toEqual([1, 2, 3, 4]);
   });
+
+  describe("primitive types", () => {
+    it("string", () => {
+      const store = observable({ name: "hello" });
+
+      let accessor: () => string;
+      createRoot((d) => {
+        accessor = obs(() => store.name);
+        return d;
+      });
+
+      expect(accessor()).toBe("hello");
+
+      action(() => { store.name = "world"; })();
+      expect(accessor()).toBe("world");
+
+      action(() => { store.name = ""; })();
+      expect(accessor()).toBe("");
+    });
+
+    it("boolean", () => {
+      const store = observable({ active: true });
+
+      let accessor: () => boolean;
+      createRoot((d) => {
+        accessor = obs(() => store.active);
+        return d;
+      });
+
+      expect(accessor()).toBe(true);
+
+      action(() => { store.active = false; })();
+      expect(accessor()).toBe(false);
+
+      action(() => { store.active = true; })();
+      expect(accessor()).toBe(true);
+    });
+
+    it("null", () => {
+      const store = observable<{ val: string | null }>({ val: null });
+
+      let accessor: () => string | null;
+      createRoot((d) => {
+        accessor = obs(() => store.val);
+        return d;
+      });
+
+      expect(accessor()).toBe(null);
+
+      action(() => { store.val = "present"; })();
+      expect(accessor()).toBe("present");
+
+      action(() => { store.val = null; })();
+      expect(accessor()).toBe(null);
+    });
+
+    it("undefined", () => {
+      const store = observable<{ val: string | undefined }>({ val: undefined });
+
+      let accessor: () => string | undefined;
+      createRoot((d) => {
+        accessor = obs(() => store.val);
+        return d;
+      });
+
+      expect(accessor()).toBe(undefined);
+
+      action(() => { store.val = "present"; })();
+      expect(accessor()).toBe("present");
+
+      action(() => { store.val = undefined; })();
+      expect(accessor()).toBe(undefined);
+    });
+
+    it("object reference", () => {
+      const obj = { id: 1, label: "a" };
+      const store = observable({ item: obj });
+
+      let accessor: () => { id: number; label: string };
+      createRoot((d) => {
+        accessor = obs(() => store.item);
+        return d;
+      });
+
+      // MobX wraps plain objects in proxies — the reference is the observable proxy
+      expect(accessor().id).toBe(1);
+      expect(accessor().label).toBe("a");
+
+      action(() => { store.item = { id: 2, label: "b" }; })();
+      expect(accessor().id).toBe(2);
+      expect(accessor().label).toBe("b");
+    });
+
+    it("equals: false re-notifies with same boolean value", () => {
+      const store = observable({ flag: true, tick: 0 });
+      const values: boolean[] = [];
+
+      createRoot((d) => {
+        const flag = obs(() => {
+          void store.tick;
+          return store.flag;
+        });
+        createEffect(() => { values.push(flag()); });
+        return d;
+      });
+
+      expect(values).toEqual([true]);
+
+      // Change tick but keep flag the same — signal re-notifies due to equals: false
+      action(() => { store.tick = 1; })();
+      expect(values).toEqual([true, true]);
+    });
+
+    it("equals: false re-notifies with same null value", () => {
+      const store = observable<{ val: string | null; tick: number }>({ val: null, tick: 0 });
+      const values: (string | null)[] = [];
+
+      createRoot((d) => {
+        const v = obs(() => {
+          void store.tick;
+          return store.val;
+        });
+        createEffect(() => { values.push(v()); });
+        return d;
+      });
+
+      expect(values).toEqual([null]);
+
+      action(() => { store.tick = 1; })();
+      expect(values).toEqual([null, null]);
+    });
+  });
+
+  describe("observable.box", () => {
+    it("obs() tracks observable.box value via .get()", () => {
+      const box = observable.box(42);
+
+      let accessor: () => number;
+      createRoot((d) => {
+        accessor = obs(() => box.get());
+        return d;
+      });
+
+      expect(accessor()).toBe(42);
+
+      action(() => { box.set(99); })();
+      expect(accessor()).toBe(99);
+    });
+
+    it("observable.box disposes autorun on Solid root disposal", () => {
+      const box = observable.box("hello");
+      const values: string[] = [];
+
+      const dispose = createRoot((d) => {
+        const accessor = obs(() => box.get());
+        createEffect(() => { values.push(accessor()); });
+        return d;
+      });
+
+      expect(values).toEqual(["hello"]);
+
+      action(() => { box.set("world"); })();
+      expect(values).toEqual(["hello", "world"]);
+
+      dispose();
+
+      action(() => { box.set("zombie"); })();
+      expect(values).toEqual(["hello", "world"]);
+    });
+  });
+
+  describe("observable.map", () => {
+    it("obs() tracks ObservableMap.get()", () => {
+      const map = observable.map<string, number>({ a: 1, b: 2 });
+
+      let accessor: () => number | undefined;
+      createRoot((d) => {
+        accessor = obs(() => map.get("a"));
+        return d;
+      });
+
+      expect(accessor()).toBe(1);
+
+      action(() => { map.set("a", 10); })();
+      expect(accessor()).toBe(10);
+    });
+
+    it("obs() tracks ObservableMap.has()", () => {
+      const map = observable.map<string, number>({ x: 5 });
+
+      let accessor: () => boolean;
+      createRoot((d) => {
+        accessor = obs(() => map.has("x"));
+        return d;
+      });
+
+      expect(accessor()).toBe(true);
+
+      action(() => { map.delete("x"); })();
+      expect(accessor()).toBe(false);
+    });
+
+    it("obs() tracks ObservableMap.size", () => {
+      const map = observable.map<string, number>({ a: 1 });
+
+      let accessor: () => number;
+      createRoot((d) => {
+        accessor = obs(() => map.size);
+        return d;
+      });
+
+      expect(accessor()).toBe(1);
+
+      action(() => { map.set("b", 2); })();
+      expect(accessor()).toBe(2);
+
+      action(() => { map.delete("a"); })();
+      expect(accessor()).toBe(1);
+    });
+
+    it("enableObservableTracking — createMemo tracks ObservableMap.get()", () => {
+      const map = observable.map<string, number>({ count: 0 });
+      let memo!: () => number | undefined;
+
+      createRoot((d) => {
+        memo = createMemo(() => map.get("count"));
+        return d;
+      });
+
+      expect(memo()).toBe(0);
+
+      action(() => { map.set("count", 7); })();
+      expect(memo()).toBe(7);
+    });
+
+    it("enableObservableTracking — createEffect tracks ObservableMap.has()", () => {
+      const map = observable.map<string, number>({ key: 1 });
+      const results: boolean[] = [];
+
+      createRoot((d) => {
+        createEffect(() => { results.push(map.has("key")); });
+        return d;
+      });
+
+      expect(results).toEqual([true]);
+
+      action(() => { map.delete("key"); })();
+      expect(results).toEqual([true, false]);
+
+      action(() => { map.set("key", 99); })();
+      expect(results).toEqual([true, false, true]);
+    });
+  });
+
+  describe("observable.set", () => {
+    it("obs() tracks ObservableSet.has()", () => {
+      const set = observable.set<string>(["active"]);
+
+      let accessor: () => boolean;
+      createRoot((d) => {
+        accessor = obs(() => set.has("active"));
+        return d;
+      });
+
+      expect(accessor()).toBe(true);
+
+      action(() => { set.delete("active"); })();
+      expect(accessor()).toBe(false);
+
+      action(() => { set.add("active"); })();
+      expect(accessor()).toBe(true);
+    });
+
+    it("obs() tracks ObservableSet.size", () => {
+      const set = observable.set<number>([1, 2]);
+
+      let accessor: () => number;
+      createRoot((d) => {
+        accessor = obs(() => set.size);
+        return d;
+      });
+
+      expect(accessor()).toBe(2);
+
+      action(() => { set.add(3); })();
+      expect(accessor()).toBe(3);
+
+      action(() => { set.delete(1); })();
+      expect(accessor()).toBe(2);
+    });
+
+    it("enableObservableTracking — createEffect tracks ObservableSet.has()", () => {
+      const set = observable.set<string>(["ready"]);
+      const results: boolean[] = [];
+
+      createRoot((d) => {
+        createEffect(() => { results.push(set.has("ready")); });
+        return d;
+      });
+
+      expect(results).toEqual([true]);
+
+      action(() => { set.delete("ready"); })();
+      expect(results).toEqual([true, false]);
+    });
+  });
 });
+

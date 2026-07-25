@@ -3,21 +3,9 @@ import { observable, action, computed, onBecomeObserved, onBecomeUnobserved } fr
 import { createRoot, createSignal, createEffect, createMemo, createRenderEffect, createComputed, onCleanup } from "solid-js";
 import { enableObservableTracking } from "../../src/enable-observable-tracking";
 
-// Reset binding state between tests — we need a fresh module state.
-// Since enableExternalSource is global, we can only call enableObservableTracking once per process.
-// We call it once here and test behavior.
-let bindingInitialized = false;
-
-function ensureBinding() {
-  if (!bindingInitialized) {
-    enableObservableTracking();
-    bindingInitialized = true;
-  }
-}
-
 describe("enableObservableTracking", () => {
   beforeEach(() => {
-    ensureBinding();
+    enableObservableTracking();
   });
 
   it("is idempotent — calling multiple times is safe", () => {

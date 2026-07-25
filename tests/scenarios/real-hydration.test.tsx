@@ -14,14 +14,6 @@ import { enableObservableTracking } from "../../src/enable-observable-tracking";
 import { obs } from "../../src/obs";
 import { observerCount } from "../basic/helpers";
 
-let bindingInitialized = false;
-function ensureBinding() {
-  if (!bindingInitialized) {
-    enableObservableTracking();
-    bindingInitialized = true;
-  }
-}
-
 function resetHydrationRuntime() {
   sharedConfig.context = undefined;
   sharedConfig.registry = undefined;
@@ -60,7 +52,7 @@ describe("scenario: real hydration (SSR markup → hydrate)", () => {
   const disposers: Array<() => void> = [];
 
   beforeEach(() => {
-    ensureBinding();
+    enableObservableTracking();
     document.body.innerHTML = "";
     resetHydrationRuntime();
   });
