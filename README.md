@@ -4,7 +4,7 @@ MobX bindings for [SolidJS](https://www.solidjs.com/) — reactive state managem
 
 Bridge MobX observables with SolidJS's compile-time reactivity — no proxy hacks, no double tracking.
 
-**~0.36 kB gzip** · Zero config · TypeScript-first · SSR-ready
+**~0.4 kB gzip** · Zero config · TypeScript-first · SSR-ready
 
 ---
 
@@ -21,7 +21,7 @@ Bridge MobX observables with SolidJS's compile-time reactivity — no proxy hack
 | Zero boilerplate | No `observer()` HOC, no `useSyncExternalStore` — just write components |
 | SSR support | Works with SolidJS server-side rendering out of the box |
 | TypeScript-first | Full type safety with zero `any` escapes |
-| Tiny footprint | ~0.36 kB gzip — minimal runtime overhead |
+| Tiny footprint | ~0.4 kB gzip — minimal runtime overhead |
 
 ---
 
