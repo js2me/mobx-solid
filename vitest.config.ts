@@ -9,7 +9,7 @@ export default defineConfig({
     globals: true,
     include: ["tests/**/*.test.{ts,tsx}"],
     exclude: [
-      "tests/basic/ssr.test.tsx",
+      "tests/basic/ssr*.test.tsx",
       "tests/scenarios/obs-without-global-tracking.test.tsx",
       "tests/scenarios/real-hydration.test.tsx",
     ],

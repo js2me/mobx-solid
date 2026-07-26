@@ -10,26 +10,22 @@ describe("scenario: exceptions in reactive computations", () => {
   });
 
   describe("obs() getter exceptions", () => {
-    it("obs() getter that throws on initial run — autorun still created, signal stays undefined", () => {
-      const store = observable({ count: 0 });
-
-      let accessor!: () => number;
-
-      // Suppress MobX console warning about uncaught exception
-      const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
-
-      createRoot((d) => {
-        accessor = obs(() => {
-          throw new Error("initial fail");
+    it("obs() getter that throws on initial run — obs() throws immediately (no signal created)", () => {
+      // Before the infinite-loop fix, obs() created the signal first (undefined),
+      // then the autorun ran the getter which threw — signal stayed undefined.
+      //
+      // Now, obs() reads the getter upfront for the initial value (inside untrack).
+      // If the getter throws, obs() throws immediately — no signal, no reaction
+      // is created. This is better behavior: fail fast and clearly, instead of
+      // silently creating a broken accessor that returns undefined forever.
+      expect(() => {
+        createRoot((d) => {
+          obs(() => {
+            throw new Error("initial fail");
+          });
+          return d;
         });
-        return d;
-      });
-
-      // Signal initialized as undefined (the `undefined as unknown as T` in obs.ts)
-      // because setValue(getter) never completed — Solid's setter caught the throw
-      expect(accessor()).toBe(undefined);
-
-      warnSpy.mockRestore();
+      }).toThrow("initial fail");
     });
 
     it("obs() getter that throws on re-run — signal retains previous value", () => {

@@ -7,6 +7,6 @@ export default defineConfig({
     name: "ssr",
     environment: "node",
     globals: true,
-    include: ["tests/basic/ssr.test.tsx"],
+    include: ["tests/basic/ssr*.test.tsx"],
   },
 });
