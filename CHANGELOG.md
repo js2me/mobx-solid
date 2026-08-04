@@ -1,5 +1,11 @@
 # mobx-solid
 
+## 0.1.0
+
+### Minor Changes
+
+- [`8d47aa0`](https://github.com/js2me/mobx-solid/commit/8d47aa0e0e5490379996e9e80b8089735ace53f5) Thanks [@js2me](https://github.com/js2me)! - Mark `obs()` as deprecated. Prefer `enableObservableTracking()`, which makes all MobX reads reactive inside Solid computations and JSX, making `obs()` unnecessary. `obs()` will be removed in the first release.
+
 ## 0.0.3
 
 ### Patch Changes
