@@ -27,8 +27,8 @@ importers:
         specifier: ^6.9.1
         version: 6.9.1
       docusite:
-        specifier: ^0.1.8
-        version: 0.1.8(@algolia/client-search@5.56.0)(postcss@8.5.19)(search-insights@2.17.3)(typescript@5.9.3)(vite@6.4.3(jiti@2.7.0))
+        specifier: ^0.1.12
+        version: 0.1.12(@algolia/client-search@5.56.0)(postcss@8.5.19)(search-insights@2.17.3)(typescript@5.9.3)(vite@6.4.3(jiti@2.7.0))
       jsdom:
         specifier: ^26.1.0
         version: 26.1.0
@@ -1611,8 +1611,8 @@ packages:
     resolution: {integrity: sha512-WkrWp9GR4KXfKGYzOLmTuGVi1UWFfws377n9cc55/tb6DuqyF6pcQ5AbiHEshaDpY9v6oaSr2XCDidGmMwdzIA==}
     engines: {node: '>=8'}
 
-  docusite@0.1.8:
-    resolution: {integrity: sha512-wM9K1VZh4gJJEvJYSyXhUD9naClEXsoUDIyrqZ5EnjAhanrFPe4m5YFK+6/3fL1/6kf6xwNV74yfWIdoqYg8Vw==}
+  docusite@0.1.12:
+    resolution: {integrity: sha512-g2zEYi+6ILPC8hP/mY60q0ZOYKRZoYwRajaqfCVCMNvyZf51mwd/vxx30PymAMIt1ntggYQ3y1GLR6JFhwhEOg==}
     hasBin: true
 
   dom-accessibility-api@0.5.16:
@@ -4541,7 +4541,7 @@ snapshots:
     dependencies:
       path-type: 4.0.0
 
-  docusite@0.1.8(@algolia/client-search@5.56.0)(postcss@8.5.19)(search-insights@2.17.3)(typescript@5.9.3)(vite@6.4.3(jiti@2.7.0)):
+  docusite@0.1.12(@algolia/client-search@5.56.0)(postcss@8.5.19)(search-insights@2.17.3)(typescript@5.9.3)(vite@6.4.3(jiti@2.7.0)):
     dependencies:
       '@iconify-json/logos': 1.2.11
       cac: 6.7.14

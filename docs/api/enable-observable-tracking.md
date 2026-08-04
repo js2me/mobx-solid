@@ -41,4 +41,4 @@ See [Reading Observables](/guide/reading-observables) for where reads must live 
 ## Related
 
 - [How It Works](/guide/how-it-works)
-- [`obs`](/api/obs) — per-expression bridge without global tracking
+- [`obs`](/api/obs) — per-expression bridge without global tracking (deprecated)

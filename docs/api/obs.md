@@ -1,5 +1,9 @@
 # obs
 
+:::danger Deprecated
+`obs()` is deprecated. Use [`enableObservableTracking()`](/api/enable-observable-tracking) instead — it makes all MobX reads reactive inside Solid computations and JSX, so `obs()` is unnecessary. `obs()` will be removed in the first release.
+:::
+
 ```ts
 function obs<T>(getter: () => T): Accessor<T>
 ```

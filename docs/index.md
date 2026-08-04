@@ -23,10 +23,10 @@ features:
   - title: Fine-grained updates
     icon: <span class="i-logos:solidjs-icon"></span>
     details: Solid updates only the DOM that depends on changed observables — no full component re-renders.
-  - title: Optional bridges
-    icon: <span class="i-logos:typescript-icon"></span>
-    details: Use obs when you need a Solid signal without enabling global tracking.
   - title: No wrappers
     icon: ⚡
     details: Unlike mobx-react-lite, you do not need an observer HOC or wrapper components.
+  - title: SSR safe
+    icon: 🌐
+    details: Works on the server with no zombie observers or memory leaks during server-side rendering.
 ---

@@ -40,6 +40,10 @@ Do not read them once in the component body and reuse the snapshot later unless 
 
 ## Without global tracking
 
+:::danger Deprecated
+`obs()` is deprecated and will be removed in the first release. Prefer calling `enableObservableTracking()` at your app entry point.
+:::
+
 If you have not called `enableObservableTracking()`, use [`obs`](/api/obs) to turn a MobX expression into a Solid accessor:
 
 ```tsx

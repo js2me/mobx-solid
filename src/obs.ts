@@ -7,6 +7,10 @@ const NO_EQUALS_MOBX: IReactionOptions<unknown, false> = { equals: () => false }
 /**
  * Converts a MobX observable expression into a SolidJS signal accessor.
  *
+ * @deprecated Use `enableObservableTracking()` instead — it makes all MobX reads
+ * reactive inside Solid computations and JSX, so `obs()` is unnecessary.
+ * `obs()` will be removed in in the first release.
+ *
  * [**Documentation**](https://js2me.github.io/mobx-solid/api/obs)
  */
 

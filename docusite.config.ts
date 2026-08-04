@@ -13,6 +13,9 @@ export default defineConfig({
     { text: "Guide", link: "/introduction/getting-started" },
     { text: "API", link: "/api/enable-observable-tracking" },
   ],
+  banners: [
+    { paths: '/', message: 'The API is still evolving — breaking changes are possible before the first stable release.', type: 'warning'}
+  ],
   sidebar: {
     "/": [
       {

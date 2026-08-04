@@ -58,9 +58,9 @@ render(() => <Counter />, document.getElementById("app")!);
 | Goal | API |
 | --- | --- |
 | Track MobX everywhere in Solid (recommended) | [`enableObservableTracking()`](/api/enable-observable-tracking) |
-| Bridge one expression to a Solid accessor | [`obs(getter)`](/api/obs) |
+| ~~Bridge one expression to a Solid accessor~~ (deprecated) | [`obs(getter)`](/api/obs) |
 
-Most apps only need `enableObservableTracking()`. Use `obs` when you want a Solid signal without enabling global tracking, or when bridging a single value into existing Solid code.
+Most apps only need `enableObservableTracking()`. `obs()` is deprecated and will be removed in the next major version — use `enableObservableTracking()` instead.
 
 ## Next steps
 
