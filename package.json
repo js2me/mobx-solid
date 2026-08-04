@@ -1,6 +1,6 @@
 {
   "name": "mobx-solid",
-  "version": "0.0.3",
+  "version": "0.1.0",
   "description": "⚡ MobX bindings for SolidJS — reactive state management with fine-grained UI updates (~0.4 kB gzip)",
   "type": "module",
   "module": "./dist/index.js",
