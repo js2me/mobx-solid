@@ -46,7 +46,7 @@
   },
   "peerDependencies": {
     "mobx": "^6.0.0",
-    "solid-js": "^1.6.0"
+    "solid-js": "^1.6.0 || ^2.0.0-0"
   },
   "devDependencies": {
     "@changesets/changelog-github": "^0.7.0",

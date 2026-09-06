@@ -3,6 +3,31 @@ import { enableExternalSource } from "solid-js";
 
 const reactionName = "mobx-solid"
 
+type ExternalSource = {
+  track: (value: unknown) => unknown;
+  dispose: () => void;
+};
+
+type ExternalSourceFactory = (
+  fn: (value: unknown) => unknown,
+  trigger: () => void,
+) => ExternalSource;
+
+const externalSourceFactory: ExternalSourceFactory = (fn, trigger) => {
+  const reaction = new Reaction(reactionName, trigger);
+
+  return {
+    track: (value) => {
+      let result: unknown;
+      reaction.track(() => {
+        result = fn(value);
+      });
+      return result;
+    },
+    dispose: () => reaction.dispose(),
+  };
+};
+
 /**
  * Enables MobX observable tracking inside SolidJS reactive computations.
  *
@@ -13,23 +38,22 @@ export const enableObservableTracking = () => {
 
   enableObservableTracking._ = true;
 
-  enableExternalSource(
-    <Prev, Next extends Prev>(fn: (v: Prev) => Next, trigger: () => void) => {
-      const reaction = new Reaction(reactionName, trigger);
-
-      return {
-        track: (x: Prev) => {
-          let result: unknown;
-          reaction.track(() => {
-            result = fn(x);
-          });
-          return result as Next;
-        },
-        dispose: () => reaction.dispose(),
-      };
-    },
-    mobxUntracked,
-  );
+  // Solid 2 changed enableExternalSource from
+  //   enableExternalSource(factory, untrack)
+  // to
+  //   enableExternalSource({ factory, untrack }).
+  // Keep the public package usable with either supported Solid major.
+  if (enableExternalSource.length === 1) {
+    (enableExternalSource as unknown as (config: {
+      factory: ExternalSourceFactory;
+      untrack: typeof mobxUntracked;
+    }) => void)({ factory: externalSourceFactory, untrack: mobxUntracked });
+  } else {
+    (enableExternalSource as unknown as (
+      factory: ExternalSourceFactory,
+      untrack: typeof mobxUntracked,
+    ) => void)(externalSourceFactory, mobxUntracked);
+  }
 }
 
 enableObservableTracking._ = false;
