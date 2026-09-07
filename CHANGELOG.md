@@ -1,5 +1,11 @@
 # mobx-solid
 
+## 0.2.0
+
+### Minor Changes
+
+- [`7e2176e`](https://github.com/js2me/mobx-solid/commit/7e2176e4a0cde0540bf6229ca83a4613e993ebc9) Thanks [@js2me](https://github.com/js2me)! - add support for solid-js 2.x.x (enableObservableTracking api)
+
 ## 0.1.0
 
 ### Minor Changes
