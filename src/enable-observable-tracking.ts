@@ -1,5 +1,5 @@
 import { Reaction, untracked as mobxUntracked } from "mobx";
-import { enableExternalSource } from "solid-js";
+import { enableExternalSource, createResource } from "solid-js";
 
 const reactionName = "mobx-solid"
 
@@ -38,17 +38,14 @@ export const enableObservableTracking = () => {
 
   enableObservableTracking._ = true;
 
-  // Solid 2 changed enableExternalSource from
-  //   enableExternalSource(factory, untrack)
-  // to
-  //   enableExternalSource({ factory, untrack }).
-  // Keep the public package usable with either supported Solid major.
-  if (enableExternalSource.length === 1) {
+  // v2 solid 
+  if (typeof createResource === 'undefined') {
     (enableExternalSource as unknown as (config: {
       factory: ExternalSourceFactory;
       untrack: typeof mobxUntracked;
     }) => void)({ factory: externalSourceFactory, untrack: mobxUntracked });
   } else {
+  // v1
     (enableExternalSource as unknown as (
       factory: ExternalSourceFactory,
       untrack: typeof mobxUntracked,
