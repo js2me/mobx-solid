@@ -1,7 +1,10 @@
 import { Reaction, untracked as mobxUntracked } from "mobx";
 import { enableExternalSource, createResource } from "solid-js";
 
-const reactionName = "mobx-solid"
+const reactionName = "mobx-solid";
+const trackingSymbol = Symbol.for(reactionName);
+
+declare const globalThis: { [trackingSymbol]?: true }
 
 type ExternalSource = {
   track: (value: unknown) => unknown;
@@ -34,9 +37,9 @@ const externalSourceFactory: ExternalSourceFactory = (fn, trigger) => {
  * [**Documentation**](https://js2me.github.io/mobx-solid/api/enable-observable-tracking)
  */
 export const enableObservableTracking = () => {
-  if (enableObservableTracking._) return;
+  if (globalThis[trackingSymbol]) return;
 
-  enableObservableTracking._ = true;
+  globalThis[trackingSymbol] = true;
 
   // v2 solid 
   if (typeof createResource === 'undefined') {
@@ -52,5 +55,3 @@ export const enableObservableTracking = () => {
     ) => void)(externalSourceFactory, mobxUntracked);
   }
 }
-
-enableObservableTracking._ = false;

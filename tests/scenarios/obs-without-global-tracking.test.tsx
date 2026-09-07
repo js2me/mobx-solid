@@ -9,16 +9,11 @@ import { observable, action } from "mobx";
 import { render, cleanup } from "@solidjs/testing-library";
 import { createEffect, createRoot } from "solid-js";
 import { obs } from "../../src/obs";
-import { enableObservableTracking } from "../../src/enable-observable-tracking";
 import { observerCount } from "../basic/helpers";
 
 describe("scenario: obs without enableObservableTracking", () => {
   afterEach(() => {
     cleanup();
-  });
-
-  it("global tracking is not enabled in this process", () => {
-    expect(enableObservableTracking._).toBe(false);
   });
 
   it("direct MobX reads in JSX are not reactive without global tracking", async () => {

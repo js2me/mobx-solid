@@ -13,7 +13,7 @@ describe("enableObservableTracking", () => {
   it("is idempotent — calling multiple times is safe", () => {
     enableObservableTracking();
     enableObservableTracking();
-    expect(enableObservableTracking._).toBe(true);
+    expect((globalThis as any)[Symbol.for('mobx-solid')]).toBe(true);
   });
 
   describe("createEffect integration", () => {
