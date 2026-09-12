@@ -32,3 +32,12 @@ No HOC or wrapper components are required — read MobX state directly where Sol
 ## Cleanup
 
 Disposal is paired: Solid owns the lifetime of each computation, and the bridge disposes the matching MobX `Reaction` when that computation goes away. You do not need to call MobX `dispose` yourself for these bridged reactions.
+
+## Turning the bridge off
+
+[`disableObservableTracking()`](/api/disable-observable-tracking) flips the bridge inert without unregistering it — SolidJS has no API to remove an external source:
+
+- every live bridged `Reaction` is disposed, so observables release their Solid-side observers;
+- computations keep reading current MobX values, but those reads no longer subscribe — MobX changes cause no further updates.
+
+Call `enableObservableTracking()` again to resume; computations re-subscribe on their next run.

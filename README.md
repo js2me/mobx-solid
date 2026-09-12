@@ -4,7 +4,7 @@ MobX bindings for [SolidJS](https://www.solidjs.com/) — reactive state managem
 
 Bridge MobX observables with SolidJS's compile-time reactivity — no proxy hacks, no double tracking.
 
-**~0.4 kB gzip** · Zero config · TypeScript-first · SSR-ready
+**~0.65 kB gzip** · Zero config · TypeScript-first · SSR-ready
 
 ---
 
@@ -21,7 +21,7 @@ Bridge MobX observables with SolidJS's compile-time reactivity — no proxy hack
 | Zero boilerplate | No `observer()` HOC, no `useSyncExternalStore` — just write components |
 | SSR support | Works with SolidJS server-side rendering out of the box |
 | TypeScript-first | Full type safety with zero `any` escapes |
-| Tiny footprint | ~0.4 kB gzip — minimal runtime overhead |
+| Tiny footprint | ~0.65 kB gzip — minimal runtime overhead |
 
 ---
 
@@ -84,7 +84,7 @@ mobx-solid hooks into MobX's internal reaction tracking and translates observabl
 | Function | Description |
 |---|---|
 | `enableObservableTracking()` | Enable the MobX → SolidJS reactivity bridge |
-| `disableObservableTracking()` | Disable the bridge (useful for SSR cleanup) |
+| `disableObservableTracking()` | Disable the bridge and dispose live reactions (SSR cleanup, tests) |
 | `observable` | MobX observable — works with SolidJS components automatically |
 | `computed` | MobX computed — auto-tracked by SolidJS |
 | `action` | MobX action — batch mutations for optimal DOM updates |
@@ -101,12 +101,14 @@ const html = renderToString(() => <App />);
 disableObservableTracking(); // Clean up after rendering
 ```
 
+`disableObservableTracking()` disposes every live bridged MobX reaction and stops MobX-driven updates. Call `enableObservableTracking()` again to resume — toggling is safe.
+
 ---
 
 ## Compatibility
 
 - MobX **6.x**
-- SolidJS **1.6+**
+- SolidJS **1.6+** / **2.x**
 - TypeScript **5.x**
 - SSR / Hydration
 

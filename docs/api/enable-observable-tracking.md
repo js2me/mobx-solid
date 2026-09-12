@@ -18,7 +18,7 @@ import { enableObservableTracking } from "mobx-solid";
 enableObservableTracking();
 ```
 
-Calling it more than once is a no-op.
+Calling it more than once is a no-op. It can also be called again after [`disableObservableTracking()`](/api/disable-observable-tracking) to re-enable the bridge.
 
 ## Behavior
 

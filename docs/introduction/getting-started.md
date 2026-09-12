@@ -15,7 +15,7 @@ pnpm add mobx-solid mobx solid-js
 Peer dependencies:
 
 - `mobx` ^6
-- `solid-js` ^1.6
+- `solid-js` ^1.6 or 2.x
 
 ## Quick Start
 
@@ -58,6 +58,7 @@ render(() => <Counter />, document.getElementById("app")!);
 | Goal | API |
 | --- | --- |
 | Track MobX everywhere in Solid (recommended) | [`enableObservableTracking()`](/api/enable-observable-tracking) |
+| Turn the bridge off (SSR cleanup, tests) | [`disableObservableTracking()`](/api/disable-observable-tracking) |
 | ~~Bridge one expression to a Solid accessor~~ (deprecated) | [`obs(getter)`](/api/obs) |
 
 Most apps only need `enableObservableTracking()`. `obs()` is deprecated and will be removed in the next major version — use `enableObservableTracking()` instead.
