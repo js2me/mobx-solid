@@ -23,6 +23,7 @@
     "playground:with-ssr": "vite --config playgrounds/with-ssr/vite.config.ts",
     "build": "vite build",
     "test": "vitest run",
+    "test:solid2": "vitest run --project solid-2",
     "test:watch": "vitest watch",
     "test:coverage": "vitest run --coverage",
     "ts:check": "tsc --noEmit -p tsconfig.build.json",

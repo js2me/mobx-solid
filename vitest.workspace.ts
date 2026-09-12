@@ -3,4 +3,5 @@ export default [
   "vitest.config.ssr.ts",
   "vitest.config.scenarios-obs-only.ts",
   "vitest.config.scenarios-hydration.ts",
+  "vitest.config.solid2.ts",
 ];

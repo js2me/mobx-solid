@@ -12,6 +12,7 @@ export default defineConfig({
       "tests/basic/ssr*.test.tsx",
       "tests/scenarios/obs-without-global-tracking.test.tsx",
       "tests/scenarios/real-hydration.test.tsx",
+      "tests/solid-2/**/*.test.ts",
     ],
   },
 });
