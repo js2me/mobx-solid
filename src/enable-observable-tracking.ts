@@ -1,5 +1,11 @@
 import { Reaction, untracked as mobxUntracked } from "mobx";
-import { enableExternalSource, createResource } from "solid-js";
+import * as solid from "solid-js";
+
+const { enableExternalSource } = solid;
+
+// `createResource` exists only in Solid 1. Reflect.get hides the reference
+// from bundlers, which fail or warn on static access to this removed export.
+const createResource = Reflect.get(solid, "createResource") as unknown;
 
 const reactionName = "mobx-solid";
 const trackingSymbol = Symbol.for(reactionName);
@@ -41,14 +47,13 @@ export const enableObservableTracking = () => {
 
   globalThis[trackingSymbol] = true;
 
-  // v2 solid 
+  // Solid 2 accepts a config object, while Solid 1 accepts positional arguments.
   if (typeof createResource === 'undefined') {
     (enableExternalSource as unknown as (config: {
       factory: ExternalSourceFactory;
       untrack: typeof mobxUntracked;
     }) => void)({ factory: externalSourceFactory, untrack: mobxUntracked });
   } else {
-  // v1
     (enableExternalSource as unknown as (
       factory: ExternalSourceFactory,
       untrack: typeof mobxUntracked,
