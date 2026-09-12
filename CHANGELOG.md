@@ -1,5 +1,19 @@
 # mobx-solid
 
+## 0.3.0
+
+### Minor Changes
+
+- [`dce5fbe`](https://github.com/js2me/mobx-solid/commit/dce5fbee7695feece0fdfea15e22a0e3871fab0e) Thanks [@js2me](https://github.com/js2me)! - Add `disableObservableTracking()` to turn the MobX → SolidJS bridge off: it disposes every live bridged reaction and stops MobX-driven recomputations, which is useful after SSR renders and in tests. Re-enabling with `enableObservableTracking()` stays safe — Solid's external source is registered only once per realm.
+
+### Patch Changes
+
+- [`e212b66`](https://github.com/js2me/mobx-solid/commit/e212b6621b2a74541898800950acec6020549f9c) Thanks [@js2me](https://github.com/js2me)! - Fix consumer builds against SolidJS 2 failing with `No matching export ... for import "createResource"`: the SolidJS 1 marker is now read via `Reflect.get`, so bundlers no longer resolve the removed export statically.
+
+- [`c73d24b`](https://github.com/js2me/mobx-solid/commit/c73d24b667fa0be3212943a66ffc5a96011e67b1) Thanks [@js2me](https://github.com/js2me)! - Share the observable tracking initialization state through `globalThis` so multiple bundled copies do not register the SolidJS external source more than once.
+
+- [`3c0821b`](https://github.com/js2me/mobx-solid/commit/3c0821bca6e62a3f66b0f7efad4a579f4d62d766) Thanks [@js2me](https://github.com/js2me)! - Keep SolidJS 2 compatibility tests alongside the existing SolidJS 1 test suite and support the SolidJS 2 external-source API without importing removed SolidJS 1 exports.
+
 ## 0.2.0
 
 ### Minor Changes
