@@ -45,6 +45,10 @@ export default defineConfig({
             text: "enableObservableTracking",
             link: "/api/enable-observable-tracking",
           },
+          {
+            text: "disableObservableTracking",
+            link: "/api/disable-observable-tracking",
+          },
           { text: "obs", link: "/api/obs" },
         ],
       },

@@ -40,5 +40,6 @@ See [Reading Observables](/guide/reading-observables) for where reads must live 
 
 ## Related
 
+- [`disableObservableTracking`](/api/disable-observable-tracking) — turn the bridge off (SSR cleanup, tests)
 - [How It Works](/guide/how-it-works)
 - [`obs`](/api/obs) — per-expression bridge without global tracking (deprecated)

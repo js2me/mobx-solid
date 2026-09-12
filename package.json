@@ -38,7 +38,7 @@
     {
       "path": "dist/index.js",
       "gzip": true,
-      "limit": "0.45 kB"
+      "limit": "0.8 kB"
     }
   ],
   "publishConfig": {
