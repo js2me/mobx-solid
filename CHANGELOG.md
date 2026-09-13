@@ -1,5 +1,11 @@
 # mobx-solid
 
+## 0.3.1
+
+### Patch Changes
+
+- [`b64b4eb`](https://github.com/js2me/mobx-solid/commit/b64b4ebcd14aeab742661cf48f03ef2efc08fa62) Thanks [@js2me](https://github.com/js2me)! - Keep tree-shaking intact: drop the `import *` namespace and the `Reflect.get` version marker — a single callable argument carrying `factory`/`untrack` fields now satisfies both the SolidJS 1 (positional) and SolidJS 2 (config object) `enableExternalSource` signatures, with no references to removed exports.
+
 ## 0.3.0
 
 ### Minor Changes
