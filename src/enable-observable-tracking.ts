@@ -7,12 +7,7 @@ type ExternalSource = {
   dispose: () => void;
 };
 
-type ExternalSourceFactory = (
-  fn: (value: unknown) => unknown,
-  trigger: () => void,
-) => ExternalSource;
-
-const externalSourceFactory: ExternalSourceFactory = (fn, trigger) => {
+const externalSourceFactory = (fn: ExternalSource['track'], trigger: VoidFunction): ExternalSource => {
   const state = getTrackingState();
   // Lazy: disable() disposes live reactions — a re-run after re-enable must subscribe afresh.
   let reaction: Reaction | undefined;
@@ -42,16 +37,9 @@ const externalSourceFactory: ExternalSourceFactory = (fn, trigger) => {
     dispose: disposeReaction,
   };
 };
-
-// Solid 1 takes (factory, untrack) positionally, Solid 2 takes a single
-// { factory, untrack } config object. A callable factory carrying both
-// fields satisfies either signature, no version detection needed.
-const compatArg = externalSourceFactory as ExternalSourceFactory & {
-  factory: ExternalSourceFactory;
-  untrack: typeof mobxUntracked;
-};
-compatArg.factory = externalSourceFactory;
-compatArg.untrack = mobxUntracked;
+// Solid 1 invokes the arg as factory, Solid 2 destructures { factory, untrack } — one callable covers both.
+externalSourceFactory.factory = externalSourceFactory;
+externalSourceFactory.untrack = mobxUntracked;
 
 /**
  * Enables MobX observable tracking inside SolidJS reactive computations.
@@ -70,7 +58,7 @@ export const enableObservableTracking = () => {
   state.registered = true;
 
   (enableExternalSource as unknown as (
-    arg: typeof compatArg,
+    arg: typeof externalSourceFactory,
     untrack: typeof mobxUntracked,
-  ) => void)(compatArg, mobxUntracked);
+  ) => void)(externalSourceFactory, mobxUntracked);
 }
