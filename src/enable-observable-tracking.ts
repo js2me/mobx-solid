@@ -1,12 +1,6 @@
 import { Reaction, untracked as mobxUntracked } from "mobx";
-import * as solid from "solid-js";
+import { enableExternalSource } from "solid-js";
 import { reactionName, getTrackingState } from "./internals";
-
-const { enableExternalSource } = solid;
-
-// `createResource` exists only in Solid 1. Reflect.get hides the reference
-// from bundlers, which fail or warn on static access to this removed export.
-const createResource = Reflect.get(solid, "createResource") as unknown;
 
 type ExternalSource = {
   track: (value: unknown) => unknown;
@@ -49,6 +43,16 @@ const externalSourceFactory: ExternalSourceFactory = (fn, trigger) => {
   };
 };
 
+// Solid 1 takes (factory, untrack) positionally, Solid 2 takes a single
+// { factory, untrack } config object. A callable factory carrying both
+// fields satisfies either signature, no version detection needed.
+const compatArg = externalSourceFactory as ExternalSourceFactory & {
+  factory: ExternalSourceFactory;
+  untrack: typeof mobxUntracked;
+};
+compatArg.factory = externalSourceFactory;
+compatArg.untrack = mobxUntracked;
+
 /**
  * Enables MobX observable tracking inside SolidJS reactive computations.
  *
@@ -65,16 +69,8 @@ export const enableObservableTracking = () => {
 
   state.registered = true;
 
-  // Solid 2 accepts a config object, while Solid 1 accepts positional arguments.
-  if (typeof createResource === 'undefined') {
-    (enableExternalSource as unknown as (config: {
-      factory: ExternalSourceFactory;
-      untrack: typeof mobxUntracked;
-    }) => void)({ factory: externalSourceFactory, untrack: mobxUntracked });
-  } else {
-    (enableExternalSource as unknown as (
-      factory: ExternalSourceFactory,
-      untrack: typeof mobxUntracked,
-    ) => void)(externalSourceFactory, mobxUntracked);
-  }
+  (enableExternalSource as unknown as (
+    arg: typeof compatArg,
+    untrack: typeof mobxUntracked,
+  ) => void)(compatArg, mobxUntracked);
 }
