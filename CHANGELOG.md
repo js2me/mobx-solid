@@ -1,5 +1,11 @@
 # mobx-solid
 
+## 0.4.0
+
+### Minor Changes
+
+- [#8](https://github.com/js2me/mobx-solid/pull/8) [`9d2daef`](https://github.com/js2me/mobx-solid/commit/9d2daefa10cdd68c7665eb3785b63ef25d1a4dc2) Thanks [@js2me](https://github.com/js2me)! - Add MobX 7 to the supported peer dependency range and test against MobX 6 and 7 in CI.
+
 ## 0.3.1
 
 ### Patch Changes
