@@ -1,4 +1,4 @@
-import { _getAdministration, getObserverTree } from "mobx";
+import { getObserverTree } from "mobx";
 import { createRoot, createEffect } from "solid-js";
 
 /**
@@ -36,8 +36,10 @@ export function collectValues<T>(accessor: () => T): {
 
 /** Number of MobX reactions currently observing `obj[prop]`. */
 export function observerCount(obj: object, prop: string): number {
-  return (_getAdministration(obj, prop) as { observers_: Set<unknown> })
-    .observers_.size;
+  const tree = getObserverTree(obj, prop) as {
+    observers?: Array<{ name: string }>;
+  };
+  return tree.observers?.length ?? 0;
 }
 
 /** Names of MobX reactions currently observing `obj[prop]`. */

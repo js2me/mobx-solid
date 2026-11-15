@@ -5,7 +5,6 @@ import {
   computed,
   makeAutoObservable,
   makeObservable,
-  observable as obs,
   runInAction,
 } from "mobx";
 import { render, cleanup } from "@solidjs/testing-library";
@@ -146,9 +145,9 @@ class TodoListVM {
     this.syncVM = new AsyncOperationVM();
     this.paginationVM = new PaginationVM();
     makeAutoObservable(this, {
-      filterVM: obs.ref,
-      syncVM: obs.ref,
-      paginationVM: obs.ref,
+      filterVM: false,
+      syncVM: false,
+      paginationVM: false,
     });
   }
 
